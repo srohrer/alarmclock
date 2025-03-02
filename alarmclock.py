@@ -4,6 +4,8 @@ import datetime
 import time
 from playsound import playsound
 import threading
+import sys
+import os
 
 class AlarmClock:
     def __init__(self):
@@ -79,7 +81,16 @@ class AlarmClock:
     def play_alarm_sound(self):
         try:
             while self.sound_playing:
-                playsound("alarm.mp3")
+                # Handle paths for both development and PyInstaller
+                if getattr(sys, 'frozen', False):
+                    # Running as compiled executable
+                    application_path = sys._MEIPASS
+                else:
+                    # Running in development
+                    application_path = os.path.dirname(os.path.abspath(__file__))
+                
+                sound_path = os.path.join(application_path, "alarm.mp3")
+                playsound(sound_path)
                 time.sleep(2)
         except Exception as e:
             print(f"Error playing sound: {e}")
